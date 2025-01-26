@@ -1,0 +1,147 @@
+#include "Zombie.h"
+
+int	main(void)
+{
+	Zombie *heap_zombie;
+
+	heap_zombie = newZombie("heapzzzzz");
+
+	heap_zombie->announce();
+
+	randomChump("stackzzzzz");
+
+	delete heap_zombie;
+
+	return (0);
+}
+
+NAME = brainz
+
+SRCS = \
+   randomChump.cpp \
+   main.cpp \
+   Zombie.cpp \
+   newZombie.cpp
+
+CC = c++
+
+FLAGS = -Wall -Wextra -Werror -std=c++98
+
+OBJS = $(SRCS:.cpp=.o)
+
+%.o: %.cpp
+	@$(CC) $(FLAGS) -c $< -o $@
+	
+all: $(NAME)
+
+$(NAME): $(OBJS)
+	@$(CC) $(FLAGS) $(OBJS) -o $(NAME)
+	@echo "________Compiled!________"
+	@echo ""
+
+.PHONY: clean
+clean:
+	@rm -f $(OBJS)
+
+.PHONY: fclean
+fclean: clean
+	@rm -f $(NAME)
+
+.PHONY: re
+re: fclean all
+
+###################################################
+
+.PHONY: te
+te: re
+	./$(NAME)
+	@make fclean -s
+
+.PHONY: va
+va: re
+	@clear
+	@valgrind ./$(NAME)
+	@make fclean -s
+
+.PHONY: names
+names:
+	@echo "SRCS = \\"
+	@for file in $(shell find . -name "*.cpp"); do \
+		basename $$file; \
+	done | awk 'NR==1 {print "   " $$0 " \\"} NR>1 {print "   " $$0 " \\"} END {print "\b"}'
+
+###################################################
+#include "Zombie.hpp"
+
+Zombie* newZombie( std::string name )
+{
+	Zombie *heap_zombie;
+
+	heap_zombie = new Zombie(name);
+
+
+	return (heap_zombie);
+}
+#include "Zombie.hpp"
+
+void randomChump( std::string name )
+{
+	Zombie	stack_zombie(name);
+
+	stack_zombie.announce();
+	
+}
+#include "Zombie.hpp"
+
+Zombie::Zombie ( void ) {}
+
+Zombie::Zombie(const std::string& def ) : name(def) {
+}
+
+Zombie::~Zombie( void ) {
+
+	std::cout << this->name << std::endl;
+}
+
+void	Zombie::announce( void )	{
+
+	std::cout << this->name
+		<< ": BraiiiiiiinnnzzzZ..." << std::endl;
+}
+
+
+#ifndef ZOMBIE_H
+# define ZOMBIE_H
+
+#include <iostream>
+#include "Zombie.hpp"
+
+Zombie* newZombie( std::string name );
+void randomChump( std::string name );
+
+#endif
+
+#ifndef ZOMBIE_HPP
+# define ZOMBIE_HPP
+
+#include <iostream>
+
+class Zombie {
+
+public :
+
+	Zombie( void ) ;
+
+	Zombie(const std::string &def ) ;
+	
+	~Zombie( void ) ;
+
+	void announce( void );
+
+private :
+
+	std::string name ;
+
+}	;
+
+#endif
